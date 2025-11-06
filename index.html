@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCERT Physics AI Tutor</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚛️</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            max-width: 850px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, #1e3c72 0%, #7e22ce 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        
+        .subtitle {
+            color: #555;
+            font-size: 1.15em;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3c72 0%, #7e22ce 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 18px;
+            border: 2.5px solid #e0e0e0;
+            border-radius: 14px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            min-height: 130px;
+            background: #fafafa;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 4px rgba(30, 60, 114, 0.1);
+            background: white;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .control-group label {
+            font-size: 0.95em;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-top: 10px;
+            accent-color: #1e3c72;
+        }
+        
+        .slider-value {
+            display: inline-block;
+            background: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #1e3c72;
+            font-weight: 700;
+            margin-left: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #1e3c72 0%, #7e22ce 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.15em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 60, 114, 0.5);
+        }
+        
+        button:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #1e3c72;
+            font-weight: 600;
+            margin-top: 25px;
+            display: none;
+            animation: pulse 1.5s ease-in-out infinite;
+            font-size: 1.05em;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .answer-section {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+            padding: 28px;
+            border-radius: 14px;
+            margin-top: 30px;
+            border-left: 6px solid #1e3c72;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.1);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .answer-section h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .answer-section p {
+            line-height: 1.9;
+            color: #2c3e50;
+            font-size: 1.08em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .copy-btn {
+            margin-top: 18px;
+            padding: 12px 24px;
+            width: auto;
+            font-size: 0.95em;
+            background: white;
+            color: #1e3c72;
+            border: 2.5px solid #1e3c72;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: #1e3c72;
+            color: white;
+        }
+        
+        .examples {
+            margin-top: 35px;
+            padding-top: 30px;
+            border-top: 2.5px solid #e0e0e0;
+        }
+        
+        .examples h4 {
+            color: #1e3c72;
+            margin-bottom: 18px;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        
+        .example-btn {
+            display: inline-block;
+            margin: 7px;
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .example-btn:hover {
+            background: linear-gradient(135deg, #1e3c72 0%, #7e22ce 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3);
+        }
+        
+        .alert {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffecb3 100%);
+            border-left: 5px solid #ffa726;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-size: 0.98em;
+            color: #8b5a00;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            box-shadow: 0 3px 10px rgba(255, 167, 38, 0.15);
+        }
+        
+        .alert-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 2.5px solid #e0e0e0;
+            color: #666;
+            font-size: 0.95em;
+        }
+        
+        .footer a {
+            color: #1e3c72;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 28px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚛️ NCERT Physics AI Tutor</h1>
+            <p class="subtitle">Master Physics concepts with AI-powered explanations!</p>
+            <span class="badge">Powered by Gemma 3 + LoRA</span>
+        </div>
+        
+        <div class="input-section">
+            <label for="question">📚 Ask Your Physics Question:</label>
+            <textarea 
+                id="question" 
+                placeholder="Example: What is Newton's First Law of Motion?"
+                rows="5"
+            ></textarea>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>
+                    📏 Response Length: <span class="slider-value" id="tokensValue">256</span> tokens
+                </label>
+                <input 
+                    type="range" 
+                    id="maxTokens" 
+                    min="50" 
+                    max="512" 
+                    value="256" 
+                    step="50"
+                    oninput="document.getElementById('tokensValue').textContent = this.value"
+                >
+            </div>
+            
+            <div class="control-group">
+                <label>
+                    🎨 Creativity: <span class="slider-value" id="tempValue">0.7</span>
+                </label>
+                <input 
+                    type="range" 
+                    id="temperature" 
+                    min="0.1" 
+                    max="1.0" 
+                    value="0.7" 
+                    step="0.1"
+                    oninput="document.getElementById('tempValue').textContent = this.value"
+                >
+            </div>
+        </div>
+        
+        <button onclick="askQuestion()" id="askBtn">
+            Ask Question 🚀
+        </button>
+        
+        <div id="loading" class="loading">
+            ⏳ Thinking... Please wait 20-30 seconds...
+        </div>
+        
+        <div id="answerSection" class="answer-section">
+            <h3>💡 Answer</h3>
+            <p id="answer"></p>
+            <button class="copy-btn" onclick="copyAnswer()">
+                📋 Copy Answer
+            </button>
+        </div>
+        
+        <div class="examples">
+            <h4>💡 Try these Physics questions:</h4>
+            <span class="example-btn" onclick="setQuestion('What is Newton\'s First Law of Motion?')">
+                Newton's First Law
+            </span>
+            <span class="example-btn" onclick="setQuestion('Explain the concept of force.')">
+                Force Concept
+            </span>
+            <span class="example-btn" onclick="setQuestion('What is the difference between speed and velocity?')">
+                Speed vs Velocity
+            </span>
+            <span class="example-btn" onclick="setQuestion('Describe the law of conservation of energy.')">
+                Energy Conservation
+            </span>
+            <span class="example-btn" onclick="setQuestion('What is gravitational force?')">
+                Gravity
+            </span>
+        </div>
+        
+        <div class="alert">
+            <span class="alert-icon">⚠️</span>
+            <div>
+                <strong>First-time users:</strong> The first query may take 20-30 seconds as the AI model loads. Subsequent queries will be faster (5-10 seconds).
+            </div>
+        </div>
+        
+        <div class="footer">
+            Made with ❤️ by RandomAccessMem | 
+            <a href="https://huggingface.co/RandomAccessMem/ncert-physics-gemma3-lora" target="_blank">View Model</a> | 
+            <a href="https://github.com/RandomAccessMem/ncert-physics-tutor" target="_blank">GitHub</a>
+        </div>
+    </div>
+
+<script>
+    const API_URL = "https://api-inference.huggingface.co/models/RandomAccessMem/ncert-physics-gemma3-lora";
+    
+    // Check if user has saved token
+    let API_TOKEN = localStorage.getItem('hf_token') || '';
+    
+    // Show token input if not set
+    window.onload = function() {
+        if (!API_TOKEN) {
+            showTokenPrompt();
+        }
+    };
+    
+    function showTokenPrompt() {
+        const token = prompt(
+            '🔑 Enter your Hugging Face API token:\n\n' +
+            '1. Go to: https://huggingface.co/settings/tokens\n' +
+            '2. Create a "Read" token\n' +
+            '3. Paste it here\n\n' +
+            'Your token will be saved locally in your browser.'
+        );
+        
+        if (token && token.trim()) {
+            API_TOKEN = token.trim();
+            localStorage.setItem('hf_token', API_TOKEN);
+            alert('✅ Token saved! You can now ask questions.');
+        } else {
+            alert('⚠️ No token provided. You won\'t be able to use the AI.');
+        }
+    }
+    
+    function clearToken() {
+        localStorage.removeItem('hf_token');
+        API_TOKEN = '';
+        alert('🗑️ Token cleared. Refresh the page to enter a new one.');
+    }
+    
+    function setQuestion(text) {
+        if (!API_TOKEN) {
+            showTokenPrompt();
+            return;
+        }
+        document.getElementById('question').value = text;
+        document.getElementById('question').focus();
+    }
+    
+    async function askQuestion() {
+        if (!API_TOKEN) {
+            showTokenPrompt();
+            return;
+        }
+        
+        const question = document.getElementById('question').value;
+        const maxTokens = parseInt(document.getElementById('maxTokens').value);
+        const temperature = parseFloat(document.getElementById('temperature').value);
+        
+        if (!question.trim()) {
+            alert('⚠️ Please enter a question!');
+            return;
+        }
+
+        const askBtn = document.getElementById('askBtn');
+        const loading = document.getElementById('loading');
+        const answerSection = document.getElementById('answerSection');
+        
+        askBtn.disabled = true;
+        askBtn.textContent = 'Thinking... 🤔';
+        loading.style.display = 'block';
+        answerSection.style.display = 'none';
+
+        const prompt = `Question: ${question}\n\nAnswer:`;
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${API_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inputs: prompt,
+                    parameters: {
+                        max_new_tokens: maxTokens,
+                        temperature: temperature,
+                        top_p: 0.9,
+                        return_full_text: false,
+                        do_sample: true
+                    }
+                })
+            });
+
+            const data = await response.json();
+            
+            if (response.status === 503) {
+                throw new Error('🔄 Model is loading. Please wait 20 seconds and try again!');
+            }
+            
+            if (response.status === 401) {
+                localStorage.removeItem('hf_token');
+                API_TOKEN = '';
+                throw new Error('❌ Invalid token. Click OK to enter a new one.');
+            }
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            let answer = '';
+            if (Array.isArray(data) && data.length > 0) {
+                answer = data[0].generated_text || '';
+            } else if (data.generated_text) {
+                answer = data.generated_text;
+            } else {
+                throw new Error('Unexpected response format');
+            }
+            
+            answer = answer.trim();
+            
+            if (!answer) {
+                throw new Error('No answer generated. Please try again.');
+            }
+            
+            document.getElementById('answer').textContent = answer;
+            answerSection.style.display = 'block';
+            answerSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+        } catch (error) {
+            alert('❌ Error: ' + error.message);
+            if (error.message.includes('Invalid token')) {
+                showTokenPrompt();
+            }
+            console.error('Full error:', error);
+        } finally {
+            askBtn.disabled = false;
+            askBtn.textContent = 'Ask Question 🚀';
+            loading.style.display = 'none';
+        }
+    }
+    
+    function copyAnswer() {
+        const answer = document.getElementById('answer').textContent;
+        navigator.clipboard.writeText(answer).then(() => {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }).catch(err => {
+            alert('Failed to copy: ' + err);
+        });
+    }
+
+    document.getElementById('question').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            askQuestion();
+        }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            askQuestion();
+        }
+    });
+</script>
+  <div class="footer">
+    Made with ❤️ by RandomAccessMem | 
+    <a href="https://huggingface.co/RandomAccessMem/ncert-physics-gemma3-lora" target="_blank">View Model</a> | 
+    <a href="https://github.com/RandomAccessMem/ncert-physics-tutor" target="_blank">GitHub</a> |
+    <a href="javascript:clearToken()" style="color: #dc3545;">🗑️ Clear Token</a>
+</div>
+</body>
+</html>
